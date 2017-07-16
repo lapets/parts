@@ -6,7 +6,6 @@ Minimal Python library for common list functions related to partitioning lists (
 
 Package Installation and Usage
 ------------------------------
-
 The package is available on PyPI::
 
     python -m pip install parts
