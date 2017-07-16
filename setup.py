@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name             = 'parts',
-    version          = '0.0.1.0',
+    version          = '0.0.2.0',
     packages         = ['parts',],
     install_requires = [],
     license          = 'MIT',
