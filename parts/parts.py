@@ -6,7 +6,6 @@
 ##   lists (and recombining them).
 ##
 ##   Web:     github.com/lapets/parts
-##   Version: 0.0.2.0
 ##
 ##
 
@@ -21,47 +20,47 @@ class PartsError(Exception):
     def __str__(self):
         return repr(self.value)
 
-def parts2(xs, number = None, length = None):
+def parts(xs, number = None, length = None):
     """
     Split a list into either the specified number of parts or
     a number of parts each of the specified length. The elements
     are distributed somewhat evenly among the parts if possible.
 
-    >>> list(parts2([1,2,3,4,5,6,7], length=1))
+    >>> list(parts([1,2,3,4,5,6,7], length=1))
     [[1], [2], [3], [4], [5], [6], [7]]
-    >>> list(parts2([1,2,3,4,5,6,7], length=2))
+    >>> list(parts([1,2,3,4,5,6,7], length=2))
     [[1, 2], [3, 4], [5, 6], [7]]
-    >>> list(parts2([1,2,3,4,5,6,7], length=3))
+    >>> list(parts([1,2,3,4,5,6,7], length=3))
     [[1, 2, 3], [4, 5, 6], [7]]
-    >>> list(parts2([1,2,3,4,5,6,7], length=4))
+    >>> list(parts([1,2,3,4,5,6,7], length=4))
     [[1, 2, 3, 4], [5, 6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], length=5))
+    >>> list(parts([1,2,3,4,5,6,7], length=5))
     [[1, 2, 3, 4, 5], [6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], length=6))
+    >>> list(parts([1,2,3,4,5,6,7], length=6))
     [[1, 2, 3, 4, 5, 6], [7]]
-    >>> list(parts2([1,2,3,4,5,6,7], length=7))
+    >>> list(parts([1,2,3,4,5,6,7], length=7))
     [[1, 2, 3, 4, 5, 6, 7]]
 
-    >>> list(parts2([1,2,3,4,5,6,7], 1))
+    >>> list(parts([1,2,3,4,5,6,7], 1))
     [[1, 2, 3, 4, 5, 6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], 2))
+    >>> list(parts([1,2,3,4,5,6,7], 2))
     [[1, 2, 3], [4, 5, 6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], 3))
+    >>> list(parts([1,2,3,4,5,6,7], 3))
     [[1, 2], [3, 4], [5, 6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], 4))
+    >>> list(parts([1,2,3,4,5,6,7], 4))
     [[1], [2, 3], [4, 5], [6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], 5))
+    >>> list(parts([1,2,3,4,5,6,7], 5))
     [[1], [2], [3], [4, 5], [6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], 6))
+    >>> list(parts([1,2,3,4,5,6,7], 6))
     [[1], [2], [3], [4], [5], [6, 7]]
-    >>> list(parts2([1,2,3,4,5,6,7], 7))
+    >>> list(parts([1,2,3,4,5,6,7], 7))
     [[1], [2], [3], [4], [5], [6], [7]]
 
-    >>> list(parts2([1,2,3,4,5,6], 2, 3))
+    >>> list(parts([1,2,3,4,5,6], 2, 3))
     [[1, 2, 3], [4, 5, 6]]
-    >>> list(parts2([1,2,3,4,5,6], number=3, length=2))
+    >>> list(parts([1,2,3,4,5,6], number=3, length=2))
     [[1, 2], [3, 4], [5, 6]]
-    >>> list(parts2([1,2,3,4,5,6,7], number=3, length=2))
+    >>> list(parts([1,2,3,4,5,6,7], number=3, length=2))
     Traceback (most recent call last):
       ...
     PartsError: 'List cannot be split into 3 parts each of length 2.'
@@ -69,6 +68,7 @@ def parts2(xs, number = None, length = None):
     """
     if number is not None and type(number) is not int:
         raise PartsError("Number of parts must be an integer.")
+
     if length is not None and type(length) is not int:
         raise PartsError("Length of each part must be an integer.")
 
