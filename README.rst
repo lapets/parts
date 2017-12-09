@@ -38,6 +38,15 @@ Examples of usage are provided  below::
     >>> list(parts2([1,2,3,4,5,6], number=3, length=2))
     [[1, 2], [3, 4], [5, 6]]
     
+    >>> list(parts([1,2,3,4,5,6,7], 7, [1,1,1,1,1,1,1]))
+    [[1], [2], [3], [4], [5], [6], [7]]
+    
+    >>> list(parts([1,2,3,4,5,6], length=[2,2,2]))
+    [[1, 2], [3, 4], [5, 6]]
+    
+    >>> list(parts([1,2,3,4,5,6], length=[1,2,3]))
+    [[1], [2, 3], [4, 5, 6]]
+    
     >>> list(parts2([1,2,3,4,5,6,7], number=3, length=2))
     Traceback (most recent call last):
       ...
