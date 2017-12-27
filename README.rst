@@ -5,6 +5,7 @@ parts
 Minimal Python library for common list functions related to partitioning lists (and recombining them).
 
 .. image:: https://badge.fury.io/py/parts.svg
+   :target: https://badge.fury.io/py/parts
 
 Package Installation and Usage
 ------------------------------
