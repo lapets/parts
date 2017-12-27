@@ -4,6 +4,8 @@ parts
 
 Minimal Python library for common list functions related to partitioning lists (and recombining them).
 
+.. image:: https://badge.fury.io/py/bitlist.svg
+
 Package Installation and Usage
 ------------------------------
 The package is available on PyPI::
