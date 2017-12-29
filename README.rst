@@ -6,6 +6,7 @@ Minimal Python library for common list functions related to partitioning lists (
 
 .. image:: https://badge.fury.io/py/parts.svg
    :target: https://badge.fury.io/py/parts
+   :alt: PyPI version and link.
 
 Package Installation and Usage
 ------------------------------
