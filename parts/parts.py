@@ -1,11 +1,10 @@
 ###############################################################################
 ## 
 ## parts.py
+## https://github.com/lapets/parts
 ##
-##   Minimal Python library for common list functions related to partitioning
-##   lists (and recombining them).
-##
-##   Web:     github.com/lapets/parts
+## Minimal Python library for common list functions related to partitioning
+## lists (and recombining them).
 ##
 ##
 
