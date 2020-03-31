@@ -1,4 +1,2 @@
-# Allow users to call parts directly.
+# Allow users to access symbols directly.
 from parts.parts import parts
-
-## eof
