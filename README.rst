@@ -2,7 +2,7 @@
 parts
 =====
 
-Minimal Python library for common list functions related to partitioning lists (and recombining them).
+Minimal Python library for common list functions related to partitioning lists.
 
 .. image:: https://badge.fury.io/py/parts.svg
    :target: https://badge.fury.io/py/parts
@@ -54,4 +54,4 @@ Examples of usage are provided  below::
     >>> list(parts2([1,2,3,4,5,6,7], number=3, length=2))
     Traceback (most recent call last):
       ...
-    PartsError: 'List cannot be split into 3 parts each of length 2.'
+    ValueError: list cannot be split into 3 parts each of length 2

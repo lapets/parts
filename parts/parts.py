@@ -64,19 +64,19 @@ def parts(xs, number = None, length = None):
     >>> list(parts([1,2,3,4,5,6], 2, length=[1,2,3]))
     Traceback (most recent call last):
       ...
-    PartsError: 'number of parts does not match number of part lengths specified in input'
+    ValueError: number of parts does not match number of part lengths specified in input
     >>> list(parts([1,2,3,4,5,6,7], number=3, length=2))
     Traceback (most recent call last):
       ...
-    PartsError: 'list cannot be split into 3 parts each of length 2'
+    ValueError: list cannot be split into 3 parts each of length 2
     """
     if number is not None and type(number) is not int:
-        raise PartsError("number of parts must be an integer")
+        raise TypeError("number of parts must be an integer")
 
     if length is not None:
         if type(length) is not int: 
             if type(length) is not list or (not all([type(l) is int for l in length])):
-                raise PartsError("length parameter must be an integer or list of integers")
+                raise TypeError("length parameter must be an integer or list of integers")
 
     if number is not None and length is None:
         number = max(1, min(len(xs), number)) # Number should be reasonable.
@@ -107,11 +107,11 @@ def parts(xs, number = None, length = None):
                     xs_index += length[len_index]
                     len_index += 1
                 else:
-                    raise PartsError("cannot return part of requested length; list too short")
+                    raise ValueError("cannot return part of requested length; list too short")
     elif number is not None and length is not None:
         if type(length) is int:
             if length * number != len(xs):
-                raise PartsError("list cannot be split into " + str(number) + " parts each of length " + str(length))
+                raise ValueError("list cannot be split into " + str(number) + " parts each of length " + str(length))
             length = max(1, length)
             for i in range(0, len(xs), length): # Yield parts of specified length.
                 yield xs[i:i + length]
@@ -125,11 +125,11 @@ def parts(xs, number = None, length = None):
                         xs_index += length[len_index]
                         len_index += 1
                     else:
-                        raise PartsError("cannot return part of requested length; list too short")
+                        raise ValueError("cannot return part of requested length; list too short")
             else:
-                raise PartsError("number of parts does not match number of part lengths specified in input")
+                raise ValueError("number of parts does not match number of part lengths specified in input")
     else: # Neither is specified.
-        raise PartsError("must specify number of parts or length of each part")
+        raise ValueError("must specify number of parts or length of each part")
 
 if __name__ == "__main__": 
     doctest.testmod()
