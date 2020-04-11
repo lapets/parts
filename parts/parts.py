@@ -6,12 +6,6 @@ partitioning lists.
 
 import doctest
 
-class PartsError(Exception):
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-
 def parts(xs, number = None, length = None):
     """
     Split a list into either the specified number of parts or
