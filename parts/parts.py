@@ -1,12 +1,12 @@
-"""Simple bit string data structure.
+"""List partitioning library.
 
-Minimal Python library for common list functions related to
-partitioning lists.
+Minimal Python library that provides common functions
+related to partitioning lists.
 """
 
 import doctest
 
-def parts(xs, number = None, length = None):
+def parts(xs, number=None, length=None):
     """
     Split a list into either the specified number of parts or
     a number of parts each of the specified length. The elements
@@ -64,13 +64,16 @@ def parts(xs, number = None, length = None):
       ...
     ValueError: list cannot be split into 3 parts each of length 2
     """
-    if number is not None and type(number) is not int:
+    if number is not None and not isinstance(number, int):
         raise TypeError("number of parts must be an integer")
 
     if length is not None:
-        if type(length) is not int: 
-            if type(length) is not list or (not all([type(l) is int for l in length])):
-                raise TypeError("length parameter must be an integer or list of integers")
+        if not isinstance(length, int):
+            if not isinstance(length, list) or\
+               (not all([isinstance(l, int) for l in length])):
+                raise TypeError(
+                    "length parameter must be an integer or list of integers"
+                )
 
     if number is not None and length is None:
         number = max(1, min(len(xs), number)) # Number should be reasonable.
@@ -88,7 +91,7 @@ def parts(xs, number = None, length = None):
                 i += length
                 length = (len(xs) - i) // number
     elif number is None and length is not None:
-        if type(length) is int:
+        if isinstance(length, int):
             length = max(1, length)
             for i in range(0, len(xs), length): # Yield parts of specified length.
                 yield xs[i:i + length]
@@ -103,9 +106,12 @@ def parts(xs, number = None, length = None):
                 else:
                     raise ValueError("cannot return part of requested length; list too short")
     elif number is not None and length is not None:
-        if type(length) is int:
+        if isinstance(length, int):
             if length * number != len(xs):
-                raise ValueError("list cannot be split into " + str(number) + " parts each of length " + str(length))
+                raise ValueError(
+                    "list cannot be split into " + str(number) +\
+                    " parts each of length " + str(length)
+                )
             length = max(1, length)
             for i in range(0, len(xs), length): # Yield parts of specified length.
                 yield xs[i:i + length]
@@ -119,11 +125,15 @@ def parts(xs, number = None, length = None):
                         xs_index += length[len_index]
                         len_index += 1
                     else:
-                        raise ValueError("cannot return part of requested length; list too short")
+                        raise ValueError(
+                            "cannot return part of requested length; list too short"
+                        )
             else:
-                raise ValueError("number of parts does not match number of part lengths specified in input")
+                raise ValueError(
+                    "number of parts does not match number of part lengths specified in input"
+                )
     else: # Neither is specified.
         raise ValueError("must specify number of parts or length of each part")
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     doctest.testmod()

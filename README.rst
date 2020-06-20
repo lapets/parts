@@ -2,7 +2,7 @@
 parts
 =====
 
-Minimal Python library for common list functions related to partitioning lists.
+Minimal Python library that provides common functions related to partitioning lists.
 
 .. image:: https://badge.fury.io/py/parts.svg
    :target: https://badge.fury.io/py/parts
@@ -19,11 +19,8 @@ The library can be imported in the usual ways::
     import parts
     from parts import parts
 
-Examples
---------
-Examples of usage are provided  below::
+Examples of usage are provided below::
 
-    >>> from parts import parts
     >>> list(parts2([1,2,3,4,5,6,7], length=2))
     [[1, 2], [3, 4], [5, 6], [7]]
     
@@ -55,3 +52,13 @@ Examples of usage are provided  below::
     Traceback (most recent call last):
       ...
     ValueError: list cannot be split into 3 parts each of length 2
+
+Testing and Conventions
+-----------------------
+Unit tests can be executed using `doctest <https://docs.python.org/3/library/doctest.html>`_::
+
+    python parts/parts.py -v
+
+Style conventions are enforced using `Pylint <https://www.pylint.org/>`_::
+
+    pylint parts
