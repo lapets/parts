@@ -4,9 +4,14 @@ parts
 
 Minimal Python library that provides common functions related to partitioning lists.
 
-.. image:: https://badge.fury.io/py/parts.svg
+|pypi| |travis|
+
+.. |pypi| image:: https://badge.fury.io/py/parts.svg
    :target: https://badge.fury.io/py/parts
    :alt: PyPI version and link.
+
+.. |travis| image:: https://travis-ci.com/lapets/parts.svg?branch=master
+    :target: https://travis-ci.com/lapets/parts
 
 Package Installation and Usage
 ------------------------------
