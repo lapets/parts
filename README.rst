@@ -4,7 +4,7 @@ parts
 
 Minimal Python library that provides common functions related to partitioning lists.
 
-|pypi| |travis|
+|pypi| |travis| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/parts.svg
    :target: https://badge.fury.io/py/parts
@@ -12,6 +12,9 @@ Minimal Python library that provides common functions related to partitioning li
 
 .. |travis| image:: https://travis-ci.com/lapets/parts.svg?branch=master
     :target: https://travis-ci.com/lapets/parts
+
+.. |coveralls| image:: https://coveralls.io/repos/github/lapets/parts/badge.svg?branch=master
+   :target: https://coveralls.io/github/lapets/parts?branch=master
 
 Package Installation and Usage
 ------------------------------

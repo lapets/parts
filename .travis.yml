@@ -15,3 +15,5 @@ install:
 script:
   - pylint parts
   - nosetests
+after_success:
+  - coveralls
