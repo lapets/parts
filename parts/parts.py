@@ -59,6 +59,10 @@ def parts(xs, number=None, length=None):
     Traceback (most recent call last):
       ...
     TypeError: number of parts must be an integer
+    >>> list(parts([1,2,3,4,5,6], length=1.2))
+    Traceback (most recent call last):
+      ...
+    TypeError: length parameter must be an integer or list of integers
     >>> list(parts([1,2,3,4,5,6], 2, length=[1,2,3]))
     Traceback (most recent call last):
       ...
@@ -75,6 +79,14 @@ def parts(xs, number=None, length=None):
     Traceback (most recent call last):
       ...
     ValueError: must specify number of parts or length of each part
+    >>> list(parts([1,2,3], length=[4]))
+    Traceback (most recent call last):
+      ...
+    ValueError: cannot return part of requested length because list too short
+    >>> list(parts([1,2,3], number=1, length=[4]))
+    Traceback (most recent call last):
+      ...
+    ValueError: cannot return part of requested length because list too short
     """
     if number is not None and not isinstance(number, int):
         raise TypeError("number of parts must be an integer")
