@@ -150,4 +150,4 @@ def parts(xs, number=None, length=None):
         raise ValueError("must specify number of parts or length of each part")
 
 if __name__ == "__main__":
-    doctest.testmod()
+    doctest.testmod() # pragma: no cover

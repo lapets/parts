@@ -10,7 +10,8 @@ python:
 cache: pip
 install:
   - pip install pylint
+  - pip install coveralls
   - pip install .
 script:
   - pylint parts
-  - python parts/parts.py -v
+  - nosetests
