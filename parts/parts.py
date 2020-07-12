@@ -55,6 +55,10 @@ def parts(xs, number=None, length=None):
     [[1, 2, 3], [4, 5, 6]]
     >>> list(parts([1,2,3,4,5,6], number=3, length=2))
     [[1, 2], [3, 4], [5, 6]]
+    >>> list(parts([1,2,3,4,5,6], 1.2))
+    Traceback (most recent call last):
+      ...
+    TypeError: number of parts must be an integer
     >>> list(parts([1,2,3,4,5,6], 2, length=[1,2,3]))
     Traceback (most recent call last):
       ...
@@ -63,6 +67,14 @@ def parts(xs, number=None, length=None):
     Traceback (most recent call last):
       ...
     ValueError: list cannot be split into 3 parts each of length 2
+    >>> list(parts([1,2,3], length=4))
+    [[1, 2, 3]]
+    >>> list(parts([1,2,3], number=3, length=[1,2,3]))
+    [[1], [2, 3]]
+    >>> list(parts([1,2,3]))
+    Traceback (most recent call last):
+      ...
+    ValueError: must specify number of parts or length of each part
     """
     if number is not None and not isinstance(number, int):
         raise TypeError("number of parts must be an integer")
@@ -104,7 +116,9 @@ def parts(xs, number=None, length=None):
                     xs_index += length[len_index]
                     len_index += 1
                 else:
-                    raise ValueError("cannot return part of requested length; list too short")
+                    raise ValueError(
+                        "cannot return part of requested length because list too short"
+                    )
     elif number is not None and length is not None:
         if isinstance(length, int):
             if length * number != len(xs):
@@ -126,7 +140,7 @@ def parts(xs, number=None, length=None):
                         len_index += 1
                     else:
                         raise ValueError(
-                            "cannot return part of requested length; list too short"
+                            "cannot return part of requested length because list too short"
                         )
             else:
                 raise ValueError(
