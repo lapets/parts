@@ -58,7 +58,7 @@ def parts(xs, number=None, length=None):
     >>> list(parts([1,2,3,4,5,6], 1.2))
     Traceback (most recent call last):
       ...
-    TypeError: number of parts must be an integer
+    TypeError: number parameter must be an integer
     >>> list(parts([1,2,3,4,5,6], length=1.2))
     Traceback (most recent call last):
       ...
@@ -66,11 +66,11 @@ def parts(xs, number=None, length=None):
     >>> list(parts([1,2,3,4,5,6], 2, length=[1,2,3]))
     Traceback (most recent call last):
       ...
-    ValueError: number of parts does not match number of part lengths specified in input
+    ValueError: number parameter does not match number of specified part lengths
     >>> list(parts([1,2,3,4,5,6,7], number=3, length=2))
     Traceback (most recent call last):
       ...
-    ValueError: list cannot be split into 3 parts each of length 2
+    ValueError: cannot retrieve 3 parts from object given part length parameter of 2
     >>> list(parts([1,2,3], length=4))
     [[1, 2, 3]]
     >>> list(parts([1,2,3], number=3, length=[1,2,3]))
@@ -78,7 +78,7 @@ def parts(xs, number=None, length=None):
     >>> list(parts([1,2,3]))
     Traceback (most recent call last):
       ...
-    ValueError: must specify number of parts or length of each part
+    ValueError: missing number of parts parameter and part length(s) parameter
     >>> list(parts([1,2,3], length=[4]))
     Traceback (most recent call last):
       ...
@@ -89,7 +89,7 @@ def parts(xs, number=None, length=None):
     ValueError: cannot return part of requested length because list too short
     """
     if number is not None and not isinstance(number, int):
-        raise TypeError("number of parts must be an integer")
+        raise TypeError("number parameter must be an integer")
 
     if length is not None:
         if not isinstance(length, int):
@@ -114,12 +114,13 @@ def parts(xs, number=None, length=None):
                 yield xs[i:i + length]
                 i += length
                 length = (len(xs) - i) // number
+
     elif number is None and length is not None:
         if isinstance(length, int):
             length = max(1, length)
             for i in range(0, len(xs), length): # Yield parts of specified length.
                 yield xs[i:i + length]
-        else: # Length is a list of integers.
+        else: # Length can only be an iterable of integers.
             xs_index = 0
             len_index = 0
             while xs_index < len(xs):
@@ -131,17 +132,18 @@ def parts(xs, number=None, length=None):
                     raise ValueError(
                         "cannot return part of requested length because list too short"
                     )
+
     elif number is not None and length is not None:
         if isinstance(length, int):
             if length * number != len(xs):
                 raise ValueError(
-                    "list cannot be split into " + str(number) +\
-                    " parts each of length " + str(length)
+                    "cannot retrieve " + str(number) + " parts from object " +\
+                    "given part length parameter of " + str(length)
                 )
             length = max(1, length)
             for i in range(0, len(xs), length): # Yield parts of specified length.
                 yield xs[i:i + length]
-        else: # Length is a list of integers.
+        else: # Length must be a list of integers.
             if len(length) == number:
                 xs_index = 0
                 len_index = 0
@@ -156,10 +158,11 @@ def parts(xs, number=None, length=None):
                         )
             else:
                 raise ValueError(
-                    "number of parts does not match number of part lengths specified in input"
+                    "number parameter does not match number of specified part lengths"
                 )
+
     else: # Neither is specified.
-        raise ValueError("must specify number of parts or length of each part")
+        raise ValueError("missing number of parts parameter and part length(s) parameter")
 
 if __name__ == "__main__":
     doctest.testmod() # pragma: no cover
