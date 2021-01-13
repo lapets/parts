@@ -55,6 +55,15 @@ def parts(xs, number=None, length=None):
     [[1, 2, 3], [4, 5, 6]]
     >>> list(parts([1,2,3,4,5,6], number=3, length=2))
     [[1, 2], [3, 4], [5, 6]]
+    >>> list(parts(iter([1,2,3,4,5,6]), number=3, length=2)) # doctest: +NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine if number of \
+    parts having specified length(s) can be retrieved
+    >>> list(parts(iter([1,2,3,4,5,6,7]), 1))
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine part lengths from number parameter
     >>> list(parts([1,2,3,4,5,6], 1.2))
     Traceback (most recent call last):
       ...
@@ -100,12 +109,19 @@ def parts(xs, number=None, length=None):
                 )
 
     if number is not None and length is None:
-        number = max(1, min(len(xs), number)) # Number should be reasonable.
-        length = len(xs) // number
+        try:
+            len_ = len(xs)
+        except:
+            raise TypeError(
+                "object must have length to determine part lengths from number parameter"
+            ) from None
+
+        number = max(1, min(len_, number)) # Number should be reasonable.
+        length = len_ // number
         i = 0
         # Produce parts by updating length after each part to ensure
         # an even distribution.
-        while number > 0 and i < len(xs):
+        while number > 0 and i < len_:
             number -= 1
             if number == 0:
                 yield xs[i:]
@@ -113,7 +129,7 @@ def parts(xs, number=None, length=None):
             else:
                 yield xs[i:i + length]
                 i += length
-                length = (len(xs) - i) // number
+                length = (len_ - i) // number
 
     elif number is None and length is not None:
         if isinstance(length, int):
@@ -134,21 +150,29 @@ def parts(xs, number=None, length=None):
                     )
 
     elif number is not None and length is not None:
+        try:
+            len_ = len(xs)
+        except:
+            raise TypeError(
+                "object must have length to determine if number of " +\
+                "parts having specified length(s) can be retrieved"
+            ) from None
+
         if isinstance(length, int):
-            if length * number != len(xs):
+            if length * number != len_:
                 raise ValueError(
                     "cannot retrieve " + str(number) + " parts from object " +\
                     "given part length parameter of " + str(length)
                 )
             length = max(1, length)
-            for i in range(0, len(xs), length): # Yield parts of specified length.
+            for i in range(0, len_, length): # Yield parts of specified length.
                 yield xs[i:i + length]
         else: # Length must be a list of integers.
             if len(length) == number:
                 xs_index = 0
                 len_index = 0
-                while xs_index < len(xs):
-                    if xs_index + length[len_index] <= len(xs):
+                while xs_index < len_:
+                    if xs_index + length[len_index] <= len_:
                         yield xs[xs_index:xs_index + length[len_index]]
                         xs_index += length[len_index]
                         len_index += 1
