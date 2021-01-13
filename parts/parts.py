@@ -83,7 +83,9 @@ def parts(xs, number=None, length=None):
     >>> list(parts([1,2,3], length=4))
     [[1, 2, 3]]
     >>> list(parts([1,2,3], number=3, length=[1,2,3]))
-    [[1], [2, 3]]
+    Traceback (most recent call last):
+      ...
+    ValueError: object has too few items to retrieve parts having specified part lengths
     >>> list(parts([1,2,3]))
     Traceback (most recent call last):
       ...
@@ -92,21 +94,27 @@ def parts(xs, number=None, length=None):
     Traceback (most recent call last):
       ...
     ValueError: cannot return part of requested length because list too short
+    >>> list(parts([1,2,3], number=2, length=[1,1]))
+    Traceback (most recent call last):
+      ...
+    ValueError: object has too many items to retrieve parts having specified part lengths
     >>> list(parts([1,2,3], number=1, length=[4]))
     Traceback (most recent call last):
       ...
     ValueError: cannot return part of requested length because list too short
+    >>> list(parts([1,2,3], number=1, length=[1.2]))
+    Traceback (most recent call last):
+      ...
+    TypeError: length parameter must be an integer or list of integers
     """
     if number is not None and not isinstance(number, int):
         raise TypeError("number parameter must be an integer")
 
     if length is not None:
-        if not isinstance(length, int):
-            if not isinstance(length, list) or\
-               (not all([isinstance(l, int) for l in length])):
-                raise TypeError(
-                    "length parameter must be an integer or list of integers"
-                )
+        if not isinstance(length, int) and not isinstance(length, list):
+            raise TypeError(
+                "length parameter must be an integer or list of integers"
+            )
 
     if number is not None and length is None:
         try:
@@ -159,16 +167,35 @@ def parts(xs, number=None, length=None):
             ) from None
 
         if isinstance(length, int):
-            if length * number != len_:
+            length = max(1, length)
+            if len_ > (length * number) or len_ <= (length * (number - 1)):
                 raise ValueError(
                     "cannot retrieve " + str(number) + " parts from object " +\
                     "given part length parameter of " + str(length)
                 )
-            length = max(1, length)
             for i in range(0, len_, length): # Yield parts of specified length.
                 yield xs[i:i + length]
+        elif (not isinstance(length, list)) or\
+             (not all(isinstance(l, int) for l in length)):
+            raise TypeError(
+                "length parameter must be an integer or list of integers"
+            )
         else: # Length must be a list of integers.
-            if len(length) == number:
+            if len(length) != number: # pylint: disable=R1720
+                raise ValueError(
+                    "number parameter does not match number of specified part lengths"
+                )
+            elif len_ <= sum(length[:-1]):
+                raise ValueError(
+                    "object has too few items to retrieve parts having " +\
+                    "specified part lengths"
+                )
+            elif len_ > sum(length):
+                raise ValueError(
+                    "object has too many items to retrieve parts having " +\
+                    "specified part lengths"
+                )
+            else:
                 xs_index = 0
                 len_index = 0
                 while xs_index < len_:
@@ -180,10 +207,6 @@ def parts(xs, number=None, length=None):
                         raise ValueError(
                             "cannot return part of requested length because list too short"
                         )
-            else:
-                raise ValueError(
-                    "number parameter does not match number of specified part lengths"
-                )
 
     else: # Neither is specified.
         raise ValueError("missing number of parts parameter and part length(s) parameter")

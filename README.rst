@@ -16,6 +16,10 @@ Minimal Python library that provides common functions related to partitioning li
 .. |coveralls| image:: https://coveralls.io/repos/github/lapets/parts/badge.svg?branch=master
    :target: https://coveralls.io/github/lapets/parts?branch=master
 
+Purpose
+-------
+This library provides a function for partitioning lists. When the number of parts is specified explicitly, it is treated as a strict requirement and an exception is raised when it cannot be satisfied. When a length for all parts (or each part) is specified explicitly, a best-effort approach is used: as many parts of the specified length are retrieved as possible, with the possibility that some parts at the end of the partition sequence have a shorter (but still non-zero) length.
+
 Package Installation and Usage
 ------------------------------
 The package is available on PyPI::
@@ -29,22 +33,22 @@ The library can be imported in the usual ways::
 
 Examples of usage are provided below::
 
-    >>> list(parts2([1,2,3,4,5,6,7], length=2))
+    >>> list(parts([1,2,3,4,5,6,7], length=2))
     [[1, 2], [3, 4], [5, 6], [7]]
     
-    >>> list(parts2([1,2,3,4,5,6,7], length=4))
+    >>> list(parts([1,2,3,4,5,6,7], length=4))
     [[1, 2, 3, 4], [5, 6, 7]]
     
-    >>> list(parts2([1,2,3,4,5,6,7], number=1))
+    >>> list(parts([1,2,3,4,5,6,7], number=1))
     [[1, 2, 3, 4, 5, 6, 7]]
     
-    >>> list(parts2([1,2,3,4,5,6,7], 5))
+    >>> list(parts([1,2,3,4,5,6,7], 5))
     [[1], [2], [3], [4, 5], [6, 7]]
     
-    >>> list(parts2([1,2,3,4,5,6], 2, 3))
+    >>> list(parts([1,2,3,4,5,6], 2, 3))
     [[1, 2, 3], [4, 5, 6]]
     
-    >>> list(parts2([1,2,3,4,5,6], number=3, length=2))
+    >>> list(parts([1,2,3,4,5,6], number=3, length=2))
     [[1, 2], [3, 4], [5, 6]]
     
     >>> list(parts([1,2,3,4,5,6,7], 7, [1,1,1,1,1,1,1]))
@@ -56,10 +60,10 @@ Examples of usage are provided below::
     >>> list(parts([1,2,3,4,5,6], length=[1,2,3]))
     [[1], [2, 3], [4, 5, 6]]
     
-    >>> list(parts2([1,2,3,4,5,6,7], number=3, length=2))
+    >>> list(parts([1,2,3,4,5,6,7], number=3, length=2))
     Traceback (most recent call last):
       ...
-    ValueError: list cannot be split into 3 parts each of length 2
+    ValueError: cannot retrieve 3 parts from object given part length parameter of 2
 
 Testing and Conventions
 -----------------------
