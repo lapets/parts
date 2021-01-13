@@ -91,17 +91,25 @@ def parts(xs, number=None, length=None):
       ...
     ValueError: missing number of parts parameter and part length(s) parameter
     >>> list(parts([1,2,3], length=[4]))
+    [[1, 2, 3]]
+    >>> list(parts([1,2,3], length=[3, 1]))
     Traceback (most recent call last):
       ...
-    ValueError: cannot return part of requested length because list too short
+    ValueError: object has too few items to retrieve parts having specified part lengths
     >>> list(parts([1,2,3], number=2, length=[1,1]))
     Traceback (most recent call last):
       ...
     ValueError: object has too many items to retrieve parts having specified part lengths
     >>> list(parts([1,2,3], number=1, length=[4]))
+    [[1, 2, 3]]
+    >>> list(parts([1,2,3], number=2, length=[3, 1]))
     Traceback (most recent call last):
       ...
-    ValueError: cannot return part of requested length because list too short
+    ValueError: object has too few items to retrieve parts having specified part lengths
+    >>> list(parts([1,2,3], length=[1,1,1,1]))
+    Traceback (most recent call last):
+      ...
+    ValueError: object has too few items to retrieve parts having specified part lengths
     >>> list(parts([1,2,3], number=1, length=[1.2]))
     Traceback (most recent call last):
       ...
@@ -147,15 +155,16 @@ def parts(xs, number=None, length=None):
         else: # Length can only be an iterable of integers.
             xs_index = 0
             len_index = 0
-            while xs_index < len(xs):
-                if xs_index + length[len_index] <= len(xs):
-                    yield xs[xs_index:xs_index + length[len_index]]
+            while xs_index < len(xs) and xs_index < len(xs):
+                if xs_index + length[len_index] > 0:
+                    yield xs[xs_index:min(len(xs), xs_index + length[len_index])]
                     xs_index += length[len_index]
                     len_index += 1
-                else:
-                    raise ValueError(
-                        "cannot return part of requested length because list too short"
-                    )
+
+            if len_index < len(length):
+                raise ValueError(
+                    "object has too few items to retrieve parts having specified part lengths"
+                )
 
     elif number is not None and length is not None:
         try:
@@ -199,14 +208,9 @@ def parts(xs, number=None, length=None):
                 xs_index = 0
                 len_index = 0
                 while xs_index < len_:
-                    if xs_index + length[len_index] <= len_:
-                        yield xs[xs_index:xs_index + length[len_index]]
-                        xs_index += length[len_index]
-                        len_index += 1
-                    else:
-                        raise ValueError(
-                            "cannot return part of requested length because list too short"
-                        )
+                    yield xs[xs_index:min(len_, xs_index + length[len_index])]
+                    xs_index += length[len_index]
+                    len_index += 1
 
     else: # Neither is specified.
         raise ValueError("missing number of parts parameter and part length(s) parameter")
