@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setup(
     name="parts",
-    version="0.2.1",
+    version="1.0.0",
     packages=["parts",],
     install_requires=[],
     license="MIT",
