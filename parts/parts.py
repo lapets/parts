@@ -5,6 +5,8 @@ related to partitioning lists.
 """
 
 import doctest
+from itertools import islice
+from collections.abc import Iterable
 
 def parts(xs, number=None, length=None):
     """
@@ -26,6 +28,9 @@ def parts(xs, number=None, length=None):
     [[1, 2, 3, 4, 5, 6], [7]]
     >>> list(parts([1,2,3,4,5,6,7], length=7))
     [[1, 2, 3, 4, 5, 6, 7]]
+
+    >>> list(parts(iter([1,2,3,4,5,6,7]), length=4))
+    [[1, 2, 3, 4], [5, 6, 7]]
 
     >>> list(parts([1,2,3,4,5,6,7], 1))
     [[1, 2, 3, 4, 5, 6, 7]]
@@ -68,10 +73,14 @@ def parts(xs, number=None, length=None):
     Traceback (most recent call last):
       ...
     TypeError: number parameter must be an integer
-    >>> list(parts([1,2,3,4,5,6], length=1.2))
+    >>> list(parts([1,2,3,4,5,6], length=1.23))
     Traceback (most recent call last):
       ...
-    TypeError: length parameter must be an integer or list of integers
+    TypeError: length parameter must be an integer or iterable of integers
+    >>> list(parts([1,2,3,4,5,6], length=[1.23]))
+    Traceback (most recent call last):
+      ...
+    TypeError: length parameter must be an integer or iterable of integers
     >>> list(parts([1,2,3,4,5,6], 2, length=[1,2,3]))
     Traceback (most recent call last):
       ...
@@ -82,6 +91,8 @@ def parts(xs, number=None, length=None):
     ValueError: cannot retrieve 3 parts from object given part length parameter of 2
     >>> list(parts([1,2,3], length=4))
     [[1, 2, 3]]
+    >>> list(parts([1,2,3], number=2, length=[1,2]))
+    [[1], [2, 3]]
     >>> list(parts([1,2,3], number=3, length=[1,2,3]))
     Traceback (most recent call last):
       ...
@@ -119,9 +130,9 @@ def parts(xs, number=None, length=None):
         raise TypeError("number parameter must be an integer")
 
     if length is not None:
-        if not isinstance(length, int) and not isinstance(length, list):
+        if not isinstance(length, int) and not isinstance(length, Iterable):
             raise TypeError(
-                "length parameter must be an integer or list of integers"
+                "length parameter must be an integer or iterable of integers"
             )
 
     if number is not None and length is None:
@@ -134,9 +145,10 @@ def parts(xs, number=None, length=None):
 
         number = max(1, min(len_, number)) # Number should be reasonable.
         length = len_ // number
-        i = 0
+
         # Produce parts by updating length after each part to ensure
         # an even distribution.
+        i = 0
         while number > 0 and i < len_:
             number -= 1
             if number == 0:
@@ -148,24 +160,32 @@ def parts(xs, number=None, length=None):
                 length = (len_ - i) // number
 
     elif number is None and length is not None:
+        xs = iter(xs)
         if isinstance(length, int):
             length = max(1, length)
-            for i in range(0, len(xs), length): # Yield parts of specified length.
-                yield xs[i:i + length]
+            while True:
+                part = list(islice(xs, 0, length))
+                if len(part) == 0:
+                    break
+                yield part # Yield parts of specified length.
         else: # Length can only be an iterable of integers.
-            xs_index = 0
-            len_index = 0
-            while xs_index < len(xs) and xs_index < len(xs):
-                if xs_index + length[len_index] > 0:
-                    yield xs[xs_index:min(len(xs), xs_index + length[len_index])]
-                    xs_index += length[len_index]
-                    len_index += 1
-
-            if len_index < len(length):
-                raise ValueError(
-                    "object has too few items to retrieve parts having specified part lengths"
-                )
-
+            lengths = iter(length)
+            while True:
+                try:
+                    length = next(lengths)
+                    if not isinstance(length, int):
+                        raise TypeError(
+                            "length parameter must be an integer or iterable of integers"
+                        )
+                    part = list(islice(xs, 0, length))
+                    if len(part) == 0:
+                        raise ValueError(
+                            "object has too few items to retrieve parts having " +\
+                            "specified part lengths"
+                        )
+                    yield part # Yield parts of specified length.
+                except StopIteration:
+                    break
     elif number is not None and length is not None:
         try:
             len_ = len(xs)
@@ -205,12 +225,15 @@ def parts(xs, number=None, length=None):
                     "specified part lengths"
                 )
             else:
-                xs_index = 0
-                len_index = 0
-                while xs_index < len_:
-                    yield xs[xs_index:min(len_, xs_index + length[len_index])]
-                    xs_index += length[len_index]
-                    len_index += 1
+                xs = iter(xs)
+                lengths = iter(length)
+                while True:
+                    try:
+                        length = next(lengths)
+                        part = list(islice(xs, 0, length))
+                        yield part # Yield parts of specified length.
+                    except StopIteration:
+                        break
 
     else: # Neither is specified.
         raise ValueError("missing number of parts parameter and part length(s) parameter")
