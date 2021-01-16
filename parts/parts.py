@@ -5,8 +5,30 @@ related to partitioning lists.
 """
 
 import doctest
-from itertools import islice
+from itertools import islice, chain
 from collections.abc import Iterable
+
+def _empty(xs):
+    """
+    Determine whether a sequential type instance is empty.
+    """
+    try:
+        return (xs, len(xs) == 0)
+    except TypeError:
+        try:
+            x = next(xs)
+            return (iter(chain([x], xs)), False)
+        except StopIteration:
+            return (xs, True)
+
+def _slice(xs, lower, upper):
+    """
+    Attempt to retrieve a subsequence of a sequential type instance
+    using slice notation or `islice`.
+    """
+    if isinstance(xs, (str, list, tuple, bytes, bytearray, range)):
+        return xs[lower: min(len(xs), upper)]
+    return islice(xs, 0, upper - lower)
 
 def parts(xs, number=None, length=None):
     """
@@ -29,7 +51,7 @@ def parts(xs, number=None, length=None):
     >>> list(parts([1,2,3,4,5,6,7], length=7))
     [[1, 2, 3, 4, 5, 6, 7]]
 
-    >>> list(parts(iter([1,2,3,4,5,6,7]), length=4))
+    >>> list(map(list, parts(iter([1,2,3,4,5,6,7]), length=4)))
     [[1, 2, 3, 4], [5, 6, 7]]
 
     >>> list(parts([1,2,3,4,5,6,7], 1))
@@ -125,7 +147,83 @@ def parts(xs, number=None, length=None):
     Traceback (most recent call last):
       ...
     TypeError: length parameter must be an integer or list of integers
+    >>> isinstance(next(parts([1,2,3,4,5], length=2)), list)
+    True
+    >>> isinstance(next(parts([1,2,3,4,5], length=[2, 2, 1])), list)
+    True
+    >>> isinstance(next(parts([1,2,3,4,5], number=2)), list)
+    True
+    >>> isinstance(next(parts([1,2,3,4], number=2, length=2)), list)
+    True
+    >>> isinstance(next(parts([1,2,3,4], number=2, length=[2, 2])), list)
+    True
+    >>> isinstance(next(parts((1,2,3,4,5), length=2)), tuple)
+    True
+    >>> isinstance(next(parts((1,2,3,4,5), length=[2, 2, 1])), tuple)
+    True
+    >>> isinstance(next(parts((1,2,3,4,5), number=2)), tuple)
+    True
+    >>> isinstance(next(parts((1,2,3,4), number=2, length=2)), tuple)
+    True
+    >>> isinstance(next(parts((1,2,3,4), number=2, length=[2, 2])), tuple)
+    True
+    >>> isinstance(next(parts("abc", length=2)), str)
+    True
+    >>> isinstance(next(parts("abc", length=[2, 1])), str)
+    True
+    >>> isinstance(next(parts("abc", number=2)), str)
+    True
+    >>> isinstance(next(parts("abcd", number=2, length=2)), str)
+    True
+    >>> isinstance(next(parts("abcd", number=2, length=[2, 2])), str)
+    True
+    >>> isinstance(next(parts(bytes([1,2,3,4,5]), length=2)), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1,2,3,4,5]), length=[2, 2, 1])), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1,2,3,4,5]), number=2)), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1,2,3,4]), number=2, length=2)), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1,2,3,4]), number=2, length=[2, 2])), bytes)
+    True
+    >>> isinstance(next(parts(bytearray([1,2,3,4,5]), length=2)), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1,2,3,4,5]), length=[2, 2, 1])), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1,2,3,4,5]), number=2)), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1,2,3,4]), number=2, length=2)), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1,2,3,4]), number=2, length=[2, 2])), bytearray)
+    True
+    >>> isinstance(next(parts(range(0, 10), length=2)), range)
+    True
+    >>> isinstance(next(parts(range(0, 5), length=[2, 2, 1])), range)
+    True
+    >>> isinstance(next(parts(range(0, 10), number=2)), range)
+    True
+    >>> isinstance(next(parts(range(0, 4), number=2, length=2)), range)
+    True
+    >>> isinstance(next(parts(range(0, 4), number=2, length=[2, 2])), range)
+    True
+    >>> isinstance(next(parts(iter([1,2,3,4]), length=2)), Iterable)
+    True
+    >>> def iterable():
+    ...     for i in range(10):
+    ...         yield i
+    >>> isinstance((next(parts(iterable(), length=2))), Iterable)
+    True
+    >>> not isinstance((next(parts(iterable(), length=2))), list)
+    True
+    >>> list(parts(123, length=2))
+    Traceback (most recent call last):
+      ...
+    TypeError: object is not iterable
     """
+    if not isinstance(xs, Iterable):
+        raise TypeError("object is not iterable")
+
     if number is not None and not isinstance(number, int):
         raise TypeError("number parameter must be an integer")
 
@@ -160,16 +258,23 @@ def parts(xs, number=None, length=None):
                 length = (len_ - i) // number
 
     elif number is None and length is not None:
-        xs = iter(xs)
         if isinstance(length, int):
             length = max(1, length)
+            index = 0
             while True:
-                part = list(islice(xs, 0, length))
-                if len(part) == 0:
+                part = _slice(xs, index, index + length)
+                index += length
+
+                # The type of each part will match that of the original
+                # object to the extent that `_slice` can do so.
+                (part, empty) = _empty(part)
+                if empty:
                     break
-                yield part # Yield parts of specified length.
+                yield part
+
         else: # Length can only be an iterable of integers.
             lengths = iter(length)
+            index = 0
             while True:
                 try:
                     length = next(lengths)
@@ -177,15 +282,22 @@ def parts(xs, number=None, length=None):
                         raise TypeError(
                             "length parameter must be an integer or iterable of integers"
                         )
-                    part = list(islice(xs, 0, length))
-                    if len(part) == 0:
+
+                    part = _slice(xs, index, index + length)
+                    index += length
+
+                    # The type of each part will match that of the original
+                    # object to the extent that `_slice` can do so.
+                    (part, empty) = _empty(part)
+                    if empty:
                         raise ValueError(
                             "object has too few items to retrieve parts having " +\
                             "specified part lengths"
                         )
-                    yield part # Yield parts of specified length.
+                    yield part
                 except StopIteration:
                     break
+
     elif number is not None and length is not None:
         try:
             len_ = len(xs)
@@ -225,13 +337,14 @@ def parts(xs, number=None, length=None):
                     "specified part lengths"
                 )
             else:
-                xs = iter(xs)
                 lengths = iter(length)
+                index = 0
                 while True:
                     try:
                         length = next(lengths)
-                        part = list(islice(xs, 0, length))
-                        yield part # Yield parts of specified length.
+                        part = _slice(xs, index, index + length)
+                        index += length
+                        yield part
                     except StopIteration:
                         break
 
