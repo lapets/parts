@@ -26,9 +26,13 @@ def _slice(xs, lower, upper):
     Attempt to retrieve a subsequence of a sequential type instance
     using slice notation or `islice`.
     """
-    if isinstance(xs, (str, list, tuple, bytes, bytearray, range)):
+    try:
         return xs[lower: min(len(xs), upper)]
-    return islice(xs, 0, upper - lower)
+    except TypeError:
+        try:
+            return islice(xs, 0, upper - lower)
+        except:
+            raise TypeError('object does not support retrieval of slices') from None
 
 def parts(xs, number=None, length=None):
     """
@@ -212,18 +216,65 @@ def parts(xs, number=None, length=None):
     >>> def iterable():
     ...     for i in range(10):
     ...         yield i
+    >>> isinstance((next(parts(iterable(), number=2))), Iterable)
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine part lengths from number parameter
     >>> isinstance((next(parts(iterable(), length=2))), Iterable)
     True
+    >>> isinstance((next(parts(iterable(), length=[2, 2]))), Iterable)
+    True
+    >>> ps = parts(iterable(), number=2, length=2)
+    >>> isinstance(next(ps), Iterable) # doctest: +NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine if number of \
+    parts having specified length(s) can be retrieved
+    >>> ps = parts(iterable(), number=2, length=[2, 2])
+    >>> isinstance(next(ps), Iterable) # doctest: +NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine if number of \
+    parts having specified length(s) can be retrieved
     >>> not isinstance((next(parts(iterable(), length=2))), list)
     True
     >>> list(parts(123, length=2))
     Traceback (most recent call last):
       ...
-    TypeError: object is not iterable
+    TypeError: object does not support retrieval of slices
+    >>> class wrap():
+    ...     def __init__(self, xs): self.xs = xs
+    ...     def __len__(self): return len(self.xs)
+    ...     def __getitem__(self, key): return wrap(self.xs[key])
+    ...     def __repr__(self): return 'wrap(' + str(self.xs) + ')'
+    >>> isinstance(next(parts(wrap([1,2,3,4]), number=2)), wrap)
+    True
+    >>> list(parts(wrap([1,2,3,4]), number=2))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1,2,3,4]), length=2))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1,2,3,4]), length=[2, 2]))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1,2,3,4]), number=2, length=2))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1,2,3,4]), number=2, length=[2, 2]))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> class inherit(tuple):
+    ...     def __getitem__(self, key): return inherit(tuple(self)[key])
+    ...     def __repr__(self): return 'inherit' + str(tuple(self))
+    >>> isinstance(next(parts(inherit([1,2,3,4]), 2)), inherit)
+    True
+    >>> list(parts(inherit([1,2,3,4]), number=2))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1,2,3,4]), length=2))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1,2,3,4]), length=[2,2]))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1,2,3,4]), number=2, length=2))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1,2,3,4]), number=2, length=[2,2]))
+    [inherit(1, 2), inherit(3, 4)]
     """
-    if not isinstance(xs, Iterable):
-        raise TypeError("object is not iterable")
-
     if number is not None and not isinstance(number, int):
         raise TypeError("number parameter must be an integer")
 
