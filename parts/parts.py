@@ -11,6 +11,18 @@ from collections.abc import Iterable
 def _empty(xs):
     """
     Determine whether a sequential type instance is empty.
+
+    >>> def error():
+    ...     for i in range(2):
+    ...         if i == 0:
+    ...             yield i
+    ...         else:
+    ...             raise RuntimeError('error in generator')
+    ...
+    >>> list(parts(error(), length=1))
+    Traceback (most recent call last):
+      ...
+    RuntimeError: error in generator
     """
     try:
         return (xs, len(xs) == 0)
@@ -20,6 +32,8 @@ def _empty(xs):
             return (iter(chain([x], xs)), False)
         except StopIteration:
             return (xs, True)
+        except Exception as e:
+            raise e from None
 
 def _slice(xs, lower, upper):
     """
