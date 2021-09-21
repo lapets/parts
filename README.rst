@@ -22,16 +22,18 @@ This library provides a function for partitioning iterable data structure instan
 
 Package Installation and Usage
 ------------------------------
-The package is available on PyPI::
+The package is available on `PyPI <https://pypi.org/project/parts/>`_::
 
     python -m pip install parts
 
-The library can be imported in the usual ways::
+The library can be imported in the usual manner::
 
     import parts
     from parts import parts
 
-Examples of usage are provided below::
+Examples
+^^^^^^^^
+Several examples are presented below::
 
     >>> list(parts([1, 2, 3, 4, 5, 6, 7], length=2))
     [[1, 2], [3, 4], [5, 6], [7]]
@@ -77,8 +79,9 @@ The documentation can be generated automatically from the source files using `Sp
 
 Testing and Conventions
 -----------------------
-All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configution details)::
+All unit tests are executed and their coverage is measured when using `nose <https://nose.readthedocs.io/>`_ (see ``setup.cfg`` for configuration details)::
 
+    python -m pip install nose coverage
     nosetests
 
 Alternatively, all unit tests are included in the module itself and can be executed using `doctest <https://docs.python.org/3/library/doctest.html>`_::
@@ -87,11 +90,12 @@ Alternatively, all unit tests are included in the module itself and can be execu
 
 Style conventions are enforced using `Pylint <https://www.pylint.org/>`_::
 
+    python -m pip install pylint
     pylint parts
 
 Contributions
 -------------
-In order to contribute to the source code, open an issue or submit a pull request on the GitHub page for this library.
+In order to contribute to the source code, open an issue or submit a pull request on the `GitHub page <https://github.com/lapets/parts>`_ for this library.
 
 Versioning
 ----------
