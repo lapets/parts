@@ -14,12 +14,12 @@ Minimal library that enables partitioning of iterable objects in a concise manne
    :target: https://parts.readthedocs.io/en/latest/?badge=latest
    :alt: Read the Docs documentation status.
 
-.. |travis| image:: https://travis-ci.com/lapets/parts.svg?branch=master
+.. |travis| image:: https://travis-ci.com/lapets/parts.svg?branch=main
    :target: https://travis-ci.com/lapets/parts
    :alt: Travis CI build status.
 
-.. |coveralls| image:: https://coveralls.io/repos/github/lapets/parts/badge.svg?branch=master
-   :target: https://coveralls.io/github/lapets/parts?branch=master
+.. |coveralls| image:: https://coveralls.io/repos/github/lapets/parts/badge.svg?branch=main
+   :target: https://coveralls.io/github/lapets/parts?branch=main
    :alt: Coveralls test coverage summary.
 
 Purpose
