@@ -1,11 +1,11 @@
 from setuptools import setup
 
 with open("README.rst", "r") as fh:
-    long_description = fh.read()
+    long_description = fh.read().replace(".. include:: toc.rst\n\n", "")
 
 setup(
     name="parts",
-    version="1.0.3",
+    version="1.1.0",
     packages=["parts",],
     install_requires=[],
     license="MIT",
