@@ -9,7 +9,6 @@ python:
   - "3.8"
 cache: pip
 install:
-  - pip install --user --upgrade pip
   - pip install pylint
   - pip install coveralls
   - pip install sphinx sphinx-rtd-theme
