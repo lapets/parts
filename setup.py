@@ -12,8 +12,8 @@ setup(
     url="https://github.com/lapets/parts",
     author="Andrei Lapets",
     author_email="a@lapets.io",
-    description="Minimal Python library that provides common "+\
-                "functions related to partitioning lists.",
+    description="Minimal library that enables partitioning "+\
+                "of iterable objects in a concise manner.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     test_suite="nose.collector",

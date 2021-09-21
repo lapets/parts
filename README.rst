@@ -2,7 +2,7 @@
 parts
 =====
 
-Minimal Python library that provides common functions related to partitioning lists.
+Minimal library that enables partitioning of iterable objects in a concise manner.
 
 |pypi| |travis| |coveralls|
 
@@ -33,34 +33,34 @@ The library can be imported in the usual ways::
 
 Examples of usage are provided below::
 
-    >>> list(parts([1,2,3,4,5,6,7], length=2))
+    >>> list(parts([1, 2, 3, 4, 5, 6, 7], length=2))
     [[1, 2], [3, 4], [5, 6], [7]]
     
-    >>> list(parts([1,2,3,4,5,6,7], length=4))
+    >>> list(parts([1, 2, 3, 4, 5, 6, 7], length=4))
     [[1, 2, 3, 4], [5, 6, 7]]
     
-    >>> list(parts([1,2,3,4,5,6,7], number=1))
+    >>> list(parts([1, 2, 3, 4, 5, 6, 7], number=1))
     [[1, 2, 3, 4, 5, 6, 7]]
     
-    >>> list(parts([1,2,3,4,5,6,7], 5))
+    >>> list(parts([1, 2, 3, 4, 5, 6, 7], 5))
     [[1], [2], [3], [4, 5], [6, 7]]
     
-    >>> list(parts([1,2,3,4,5,6], 2, 3))
+    >>> list(parts([1, 2, 3, 4, 5, 6], 2, 3))
     [[1, 2, 3], [4, 5, 6]]
     
-    >>> list(parts([1,2,3,4,5,6], number=3, length=2))
+    >>> list(parts([1, 2, 3, 4, 5, 6], number=3, length=2))
     [[1, 2], [3, 4], [5, 6]]
     
-    >>> list(parts([1,2,3,4,5,6,7], 7, [1,1,1,1,1,1,1]))
+    >>> list(parts([1, 2, 3, 4, 5, 6, 7], 7, [1, 1, 1, 1, 1, 1, 1]))
     [[1], [2], [3], [4], [5], [6], [7]]
     
-    >>> list(parts([1,2,3,4,5,6], length=[2,2,2]))
+    >>> list(parts([1, 2, 3, 4, 5, 6], length=[2, 2, 2]))
     [[1, 2], [3, 4], [5, 6]]
     
-    >>> list(parts([1,2,3,4,5,6], length=[1,2,3]))
+    >>> list(parts([1, 2, 3, 4, 5, 6], length=[1, 2, 3]))
     [[1], [2, 3], [4, 5, 6]]
     
-    >>> list(parts([1,2,3,4,5,6,7], number=3, length=2))
+    >>> list(parts([1, 2, 3, 4, 5, 6, 7], number=3, length=2))
     Traceback (most recent call last):
       ...
     ValueError: cannot retrieve 3 parts from object given part length parameter of 2
