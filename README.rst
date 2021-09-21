@@ -4,17 +4,23 @@ parts
 
 Minimal library that enables partitioning of iterable objects in a concise manner.
 
-|pypi| |travis| |coveralls|
+|pypi| |readthedocs| |travis| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/parts.svg
    :target: https://badge.fury.io/py/parts
    :alt: PyPI version and link.
 
+.. |readthedocs| image:: https://readthedocs.org/projects/parts/badge/?version=latest
+   :target: https://parts.readthedocs.io/en/latest/?badge=latest
+   :alt: Read the Docs documentation status.
+
 .. |travis| image:: https://travis-ci.com/lapets/parts.svg?branch=master
-    :target: https://travis-ci.com/lapets/parts
+   :target: https://travis-ci.com/lapets/parts
+   :alt: Travis CI build status.
 
 .. |coveralls| image:: https://coveralls.io/repos/github/lapets/parts/badge.svg?branch=master
    :target: https://coveralls.io/github/lapets/parts?branch=master
+   :alt: Coveralls test coverage summary.
 
 Purpose
 -------
