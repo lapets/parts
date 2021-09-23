@@ -3,9 +3,12 @@ from setuptools import setup
 with open("README.rst", "r") as fh:
     long_description = fh.read().replace(".. include:: toc.rst\n\n", "")
 
+# The line below is parsed by `docs/conf.py`.
+version = "1.1.2"
+
 setup(
     name="parts",
-    version="1.1.1",
+    version=version,
     packages=["parts",],
     install_requires=[],
     license="MIT",
