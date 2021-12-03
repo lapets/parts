@@ -3,13 +3,14 @@ from setuptools import setup
 with open("README.rst", "r") as fh:
     long_description = fh.read().replace(".. include:: toc.rst\n\n", "")
 
-# The line below is parsed by `docs/conf.py`.
+# The lines below can be parsed by `docs/conf.py`.
+name = "parts"
 version = "1.1.2"
 
 setup(
-    name="parts",
+    name=name,
     version=version,
-    packages=["parts",],
+    packages=[name,],
     install_requires=[],
     license="MIT",
     url="https://github.com/lapets/parts",
