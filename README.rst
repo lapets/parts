@@ -4,7 +4,7 @@ parts
 
 Minimal library that enables partitioning of iterable objects in a concise manner.
 
-|pypi| |readthedocs| |travis| |coveralls|
+|pypi| |readthedocs| |actions| |coveralls|
 
 .. |pypi| image:: https://badge.fury.io/py/parts.svg
    :target: https://badge.fury.io/py/parts
@@ -14,9 +14,9 @@ Minimal library that enables partitioning of iterable objects in a concise manne
    :target: https://parts.readthedocs.io/en/latest/?badge=latest
    :alt: Read the Docs documentation status.
 
-.. |travis| image:: https://travis-ci.com/lapets/parts.svg?branch=main
-   :target: https://travis-ci.com/lapets/parts
-   :alt: Travis CI build status.
+.. |actions| image:: https://github.com/lapets/parts/workflows/lint-test-cover-docs/badge.svg
+   :target: https://github.com/lapets/parts/actions/workflows/lint-test-cover-docs.yml
+   :alt: GitHub Actions status.
 
 .. |coveralls| image:: https://coveralls.io/repos/github/lapets/parts/badge.svg?branch=main
    :target: https://coveralls.io/github/lapets/parts?branch=main
