@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 # The lines below can be parsed by `docs/conf.py`.
 name = "parts"
-version = "1.2.0"
+version = "1.2.1"
 
 setup(
     name=name,
