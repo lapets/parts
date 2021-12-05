@@ -49,15 +49,6 @@ exclude_patterns = ['_build']
 
 # Options to configure autodoc extension behavior.
 autodoc_member_order = 'bysource'
-autodoc_default_options = {
-    'special-members': True,
-    'exclude-members': ','.join([
-        '__weakref__',
-        '__module__',
-        '__hash__',
-        '__dict__'
-    ])
-}
 autodoc_preserve_defaults = True
 
 
