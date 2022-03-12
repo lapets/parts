@@ -107,12 +107,12 @@ Versioning
 ----------
 Beginning with version 0.2.0, the version number format for this library and the changes to the library associated with version number increments conform with `Semantic Versioning 2.0.0 <https://semver.org/#semantic-versioning-200>`_.
 
-Publishing (for Maintainers)
-----------------------------
+Publishing
+----------
 This library can be published as a `package on PyPI <https://pypi.org/project/parts/>`_ by a package maintainer. Install the `wheel <https://pypi.org/project/wheel/>`_ package, remove any old build/distribution files, and package the source into a distribution archive::
 
     python -m pip install wheel
-    rm -rf dist && rm -rf bcl.egg-info
+    rm -rf dist *.egg-info
     python setup.py sdist bdist_wheel
 
 Next, install the `twine <https://pypi.org/project/twine/>`_ package and upload the package distribution archive to PyPI::
