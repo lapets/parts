@@ -3,10 +3,11 @@ Minimal library that enables partitioning of iterable objects in a concise
 manner.
 """
 import doctest
-from itertools import islice, chain
+from typing import Union, Optional, Tuple
 from collections.abc import Iterable
+from itertools import islice, chain
 
-def _empty(xs):
+def _empty(xs: Iterable) -> Tuple[Iterable, bool]:
     """
     Determine whether a sequential type instance is empty.
 
@@ -33,7 +34,7 @@ def _empty(xs):
         except Exception as e:
             raise e from None
 
-def _slice(xs, lower, upper):
+def _slice(xs: Iterable, lower: int, upper: int) -> Iterable:
     """
     Attempt to retrieve a subsequence of a sequential type instance
     using slice notation or :obj:`itertools.islice`.
@@ -48,13 +49,21 @@ def _slice(xs, lower, upper):
                 'object does not support retrieval of slices'
             ) from None
 
-def parts(xs, number=None, length=None): # pylint: disable=R0912,R0915
+def parts( # pylint: disable=R0912,R0915
+        xs: Iterable,
+        number: Optional[int] = None,
+        length: Union[int, Iterable[int], None] = None
+    ) -> Iterable:
     """
     This function splits an :obj:`~collections.abc.Iterable` object into either
     the specified number of parts or a number of parts each of the specified
     length. When input parameters lead to ambiguous or conflicting constraints,
     either elements are distributed in a best-effort manner or an exception is
     raised (depending on the specific scenario).
+
+    :param xs: Iterable to split into parts.
+    :param number: Number of parts.
+    :param length: Length of every part or iterable of part lengths.
 
     In the simplest case, the target number of parts can be specified.
 
@@ -93,10 +102,9 @@ def parts(xs, number=None, length=None): # pylint: disable=R0912,R0915
     >>> list(map(list, parts(iter([1, 2, 3, 4, 5, 6, 7]), length=4)))
     [[1, 2, 3, 4], [5, 6, 7]]
 
-    A sequence of length values can be specified. The entry
-    at each position in the sequence of lengths dictates the
-    length of the part in the corresponding position in the
-    output.
+    An iterable of length values can be specified. The entry at each position
+    in the iterable of lengths dictates the length of the part in the
+    corresponding position in the output.
 
     >>> list(parts([1, 2, 3, 4, 5, 6, 7], 7, [1, 1, 1, 1, 1, 1, 1]))
     [[1], [2], [3], [4], [5], [6], [7]]
@@ -107,8 +115,145 @@ def parts(xs, number=None, length=None): # pylint: disable=R0912,R0915
     >>> list(parts([1, 2, 3, 4, 5, 6], length=[1, 2, 3]))
     [[1], [2, 3], [4, 5, 6]]
 
-    A descriptive exception is raised when parameter values cannot
-    be satisfied, cause a conflict, or have an incorrect type.
+    The type of input objects (for built-in types) is preserved in the output.
+
+    >>> isinstance(next(parts([1, 2, 3, 4, 5], length=2)), list)
+    True
+    >>> isinstance(next(parts([1, 2, 3, 4, 5], length=[2, 2, 1])), list)
+    True
+    >>> isinstance(next(parts([1, 2, 3, 4, 5], number=2)), list)
+    True
+    >>> isinstance(next(parts([1, 2, 3, 4], number=2, length=2)), list)
+    True
+    >>> isinstance(next(parts([1, 2, 3, 4], number=2, length=[2, 2])), list)
+    True
+    >>> isinstance(next(parts((1, 2, 3, 4, 5), length=2)), tuple)
+    True
+    >>> isinstance(next(parts((1, 2, 3, 4, 5), length=[2, 2, 1])), tuple)
+    True
+    >>> isinstance(next(parts((1, 2, 3, 4, 5), number=2)), tuple)
+    True
+    >>> isinstance(next(parts((1, 2, 3, 4), number=2, length=2)), tuple)
+    True
+    >>> isinstance(next(parts((1, 2, 3, 4), number=2, length=[2, 2])), tuple)
+    True
+    >>> isinstance(next(parts('abc', length=2)), str)
+    True
+    >>> isinstance(next(parts('abc', length=[2, 1])), str)
+    True
+    >>> isinstance(next(parts('abc', number=2)), str)
+    True
+    >>> isinstance(next(parts('abcd', number=2, length=2)), str)
+    True
+    >>> isinstance(next(parts('abcd', number=2, length=[2, 2])), str)
+    True
+    >>> isinstance(next(parts(bytes([1, 2, 3, 4, 5]), length=2)), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1, 2, 3, 4, 5]), length=[2, 2, 1])), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1, 2, 3, 4, 5]), number=2)), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1, 2, 3, 4]), number=2, length=2)), bytes)
+    True
+    >>> isinstance(next(parts(bytes([1, 2, 3, 4]), number=2, length=[2, 2])), bytes)
+    True
+    >>> isinstance(next(parts(bytearray([1, 2, 3, 4, 5]), length=2)), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1, 2, 3, 4, 5]), length=[2, 2, 1])), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1, 2, 3, 4, 5]), number=2)), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1, 2, 3, 4]), number=2, length=2)), bytearray)
+    True
+    >>> isinstance(next(parts(bytearray([1, 2, 3, 4]), number=2, length=[2, 2])), bytearray)
+    True
+    >>> isinstance(next(parts(range(0, 10), length=2)), range)
+    True
+    >>> isinstance(next(parts(range(0, 5), length=[2, 2, 1])), range)
+    True
+    >>> isinstance(next(parts(range(0, 10), number=2)), range)
+    True
+    >>> isinstance(next(parts(range(0, 4), number=2, length=2)), range)
+    True
+    >>> isinstance(next(parts(range(0, 4), number=2, length=[2, 2])), range)
+    True
+    >>> isinstance(next(parts(iter([1, 2, 3, 4]), length=2)), Iterable)
+    True
+
+    The type of input :obj:`~collections.abc.Sequence` objects is preserved in
+    the output.
+
+    >>> class wrap:
+    ...     def __init__(self, xs): self.xs = xs
+    ...     def __len__(self): return len(self.xs)
+    ...     def __getitem__(self, key): return wrap(self.xs[key])
+    ...     def __repr__(self): return 'wrap(' + str(self.xs) + ')'
+    >>> isinstance(next(parts(wrap([1, 2, 3, 4]), number=2)), wrap)
+    True
+    >>> list(parts(wrap([1, 2, 3, 4]), number=2))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1, 2, 3, 4]), length=2))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1, 2, 3, 4]), length=[2, 2]))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1, 2, 3, 4]), number=2, length=2))
+    [wrap([1, 2]), wrap([3, 4])]
+    >>> list(parts(wrap([1, 2, 3, 4]), number=2, length=[2, 2]))
+    [wrap([1, 2]), wrap([3, 4])]
+
+    The type of input objects *derived* from a :obj:`~collections.abc.Sequence`
+    type is also preserved in the output.
+
+    >>> class inherit(tuple):
+    ...     def __getitem__(self, key): return inherit(tuple(self)[key])
+    ...     def __repr__(self): return 'inherit' + str(tuple(self))
+    >>> isinstance(next(parts(inherit([1, 2, 3, 4]), 2)), inherit)
+    True
+    >>> list(parts(inherit([1, 2, 3, 4]), number=2))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1, 2, 3, 4]), length=2))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1, 2, 3, 4]), length=[2, 2]))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1, 2, 3, 4]), number=2, length=2))
+    [inherit(1, 2), inherit(3, 4)]
+    >>> list(parts(inherit([1, 2, 3, 4]), number=2, length=[2, 2]))
+    [inherit(1, 2), inherit(3, 4)]
+
+    Iterable inputs yield iterable outputs when possible.
+
+    >>> def iterable():
+    ...     for i in range(10):
+    ...         yield i
+    >>> isinstance((next(parts(iterable(), number=2))), Iterable)
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine part lengths from number parameter
+    >>> isinstance((next(parts(iterable(), length=2))), Iterable)
+    True
+    >>> isinstance((next(parts(iterable(), length=[2, 2]))), Iterable)
+    True
+    >>> ps = parts(iterable(), number=2, length=2)
+    >>> isinstance(next(ps), Iterable) # doctest: +NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine if number of \
+parts having specified length(s) can be retrieved
+    >>> ps = parts(iterable(), number=2, length=[2, 2])
+    >>> isinstance(next(ps), Iterable) # doctest: +NORMALIZE_WHITESPACE
+    Traceback (most recent call last):
+      ...
+    TypeError: object must have length to determine if number of \
+parts having specified length(s) can be retrieved
+    >>> not isinstance((next(parts(iterable(), length=2))), list)
+    True
+    >>> list(parts(123, length=2))
+    Traceback (most recent call last):
+      ...
+    TypeError: object does not support retrieval of slices
+
+    A descriptive exception is raised when parameter values cannot be satisfied,
+    cause a conflict, or have an incorrect type.
 
     >>> list(parts([1, 2, 3, 4, 5, 6], 2, 3))
     [[1, 2, 3], [4, 5, 6]]
@@ -179,141 +324,6 @@ parts having specified length(s) can be retrieved
     Traceback (most recent call last):
       ...
     TypeError: length parameter must be an integer or list of integers
-
-    The type of input objects (for built-in types) is preserved in the output.
-
-    >>> isinstance(next(parts([1, 2, 3, 4, 5], length=2)), list)
-    True
-    >>> isinstance(next(parts([1, 2, 3, 4, 5], length=[2, 2, 1])), list)
-    True
-    >>> isinstance(next(parts([1, 2, 3, 4, 5], number=2)), list)
-    True
-    >>> isinstance(next(parts([1, 2, 3, 4], number=2, length=2)), list)
-    True
-    >>> isinstance(next(parts([1, 2, 3, 4], number=2, length=[2, 2])), list)
-    True
-    >>> isinstance(next(parts((1, 2, 3, 4, 5), length=2)), tuple)
-    True
-    >>> isinstance(next(parts((1, 2, 3, 4, 5), length=[2, 2, 1])), tuple)
-    True
-    >>> isinstance(next(parts((1, 2, 3, 4, 5), number=2)), tuple)
-    True
-    >>> isinstance(next(parts((1, 2, 3, 4), number=2, length=2)), tuple)
-    True
-    >>> isinstance(next(parts((1, 2, 3, 4), number=2, length=[2, 2])), tuple)
-    True
-    >>> isinstance(next(parts('abc', length=2)), str)
-    True
-    >>> isinstance(next(parts('abc', length=[2, 1])), str)
-    True
-    >>> isinstance(next(parts('abc', number=2)), str)
-    True
-    >>> isinstance(next(parts('abcd', number=2, length=2)), str)
-    True
-    >>> isinstance(next(parts('abcd', number=2, length=[2, 2])), str)
-    True
-    >>> isinstance(next(parts(bytes([1, 2, 3, 4, 5]), length=2)), bytes)
-    True
-    >>> isinstance(next(parts(bytes([1, 2, 3, 4, 5]), length=[2, 2, 1])), bytes)
-    True
-    >>> isinstance(next(parts(bytes([1, 2, 3, 4, 5]), number=2)), bytes)
-    True
-    >>> isinstance(next(parts(bytes([1, 2, 3, 4]), number=2, length=2)), bytes)
-    True
-    >>> isinstance(next(parts(bytes([1, 2, 3, 4]), number=2, length=[2, 2])), bytes)
-    True
-    >>> isinstance(next(parts(bytearray([1, 2, 3, 4, 5]), length=2)), bytearray)
-    True
-    >>> isinstance(next(parts(bytearray([1, 2, 3, 4, 5]), length=[2, 2, 1])), bytearray)
-    True
-    >>> isinstance(next(parts(bytearray([1, 2, 3, 4, 5]), number=2)), bytearray)
-    True
-    >>> isinstance(next(parts(bytearray([1, 2, 3, 4]), number=2, length=2)), bytearray)
-    True
-    >>> isinstance(next(parts(bytearray([1, 2, 3, 4]), number=2, length=[2, 2])), bytearray)
-    True
-    >>> isinstance(next(parts(range(0, 10), length=2)), range)
-    True
-    >>> isinstance(next(parts(range(0, 5), length=[2, 2, 1])), range)
-    True
-    >>> isinstance(next(parts(range(0, 10), number=2)), range)
-    True
-    >>> isinstance(next(parts(range(0, 4), number=2, length=2)), range)
-    True
-    >>> isinstance(next(parts(range(0, 4), number=2, length=[2, 2])), range)
-    True
-    >>> isinstance(next(parts(iter([1, 2, 3, 4]), length=2)), Iterable)
-    True
-
-    Iterable inputs yield iterable outputs when possible.
-
-    >>> def iterable():
-    ...     for i in range(10):
-    ...         yield i
-    >>> isinstance((next(parts(iterable(), number=2))), Iterable)
-    Traceback (most recent call last):
-      ...
-    TypeError: object must have length to determine part lengths from number parameter
-    >>> isinstance((next(parts(iterable(), length=2))), Iterable)
-    True
-    >>> isinstance((next(parts(iterable(), length=[2, 2]))), Iterable)
-    True
-    >>> ps = parts(iterable(), number=2, length=2)
-    >>> isinstance(next(ps), Iterable) # doctest: +NORMALIZE_WHITESPACE
-    Traceback (most recent call last):
-      ...
-    TypeError: object must have length to determine if number of \
-parts having specified length(s) can be retrieved
-    >>> ps = parts(iterable(), number=2, length=[2, 2])
-    >>> isinstance(next(ps), Iterable) # doctest: +NORMALIZE_WHITESPACE
-    Traceback (most recent call last):
-      ...
-    TypeError: object must have length to determine if number of \
-parts having specified length(s) can be retrieved
-    >>> not isinstance((next(parts(iterable(), length=2))), list)
-    True
-    >>> list(parts(123, length=2))
-    Traceback (most recent call last):
-      ...
-    TypeError: object does not support retrieval of slices
-
-    The type of input sequence objects is preserved in the output.
-
-    >>> class wrap:
-    ...     def __init__(self, xs): self.xs = xs
-    ...     def __len__(self): return len(self.xs)
-    ...     def __getitem__(self, key): return wrap(self.xs[key])
-    ...     def __repr__(self): return 'wrap(' + str(self.xs) + ')'
-    >>> isinstance(next(parts(wrap([1, 2, 3, 4]), number=2)), wrap)
-    True
-    >>> list(parts(wrap([1, 2, 3, 4]), number=2))
-    [wrap([1, 2]), wrap([3, 4])]
-    >>> list(parts(wrap([1, 2, 3, 4]), length=2))
-    [wrap([1, 2]), wrap([3, 4])]
-    >>> list(parts(wrap([1, 2, 3, 4]), length=[2, 2]))
-    [wrap([1, 2]), wrap([3, 4])]
-    >>> list(parts(wrap([1, 2, 3, 4]), number=2, length=2))
-    [wrap([1, 2]), wrap([3, 4])]
-    >>> list(parts(wrap([1, 2, 3, 4]), number=2, length=[2, 2]))
-    [wrap([1, 2]), wrap([3, 4])]
-
-    The type of input objects derived from a sequence type is preserved in the output.
-
-    >>> class inherit(tuple):
-    ...     def __getitem__(self, key): return inherit(tuple(self)[key])
-    ...     def __repr__(self): return 'inherit' + str(tuple(self))
-    >>> isinstance(next(parts(inherit([1, 2, 3, 4]), 2)), inherit)
-    True
-    >>> list(parts(inherit([1, 2, 3, 4]), number=2))
-    [inherit(1, 2), inherit(3, 4)]
-    >>> list(parts(inherit([1, 2, 3, 4]), length=2))
-    [inherit(1, 2), inherit(3, 4)]
-    >>> list(parts(inherit([1, 2, 3, 4]), length=[2, 2]))
-    [inherit(1, 2), inherit(3, 4)]
-    >>> list(parts(inherit([1, 2, 3, 4]), number=2, length=2))
-    [inherit(1, 2), inherit(3, 4)]
-    >>> list(parts(inherit([1, 2, 3, 4]), number=2, length=[2, 2]))
-    [inherit(1, 2), inherit(3, 4)]
     """
     if number is not None and not isinstance(number, int):
         raise TypeError('number parameter must be an integer')
