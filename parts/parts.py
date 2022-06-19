@@ -1,8 +1,7 @@
 """
-Minimal library that enables partitioning of
-iterable objects in a concise manner.
+Minimal library that enables partitioning of iterable objects in a concise
+manner.
 """
-
 import doctest
 from itertools import islice, chain
 from collections.abc import Iterable
@@ -37,7 +36,7 @@ def _empty(xs):
 def _slice(xs, lower, upper):
     """
     Attempt to retrieve a subsequence of a sequential type instance
-    using slice notation or `islice`.
+    using slice notation or :obj:`itertools.islice`.
     """
     try:
         return xs[lower: min(len(xs), upper)]
@@ -49,11 +48,11 @@ def _slice(xs, lower, upper):
 
 def parts(xs, number=None, length=None): # pylint: disable=R0912,R0915
     """
-    This function splits an iterable object into either the specified
-    number of parts or a number of parts each of the specified length.
-    When input parameters lead to ambiguous or conflicting constraints,
-    either elements are distributed in a best-effort manner or an
-    exception is raised (depending on the specific scenario).
+    This function splits an :obj:`~collections.abc.Iterable` object into either
+    the specified number of parts or a number of parts each of the specified
+    length. When input parameters lead to ambiguous or conflicting constraints,
+    either elements are distributed in a best-effort manner or an exception is
+    raised (depending on the specific scenario).
 
     In the simplest case, the target number of parts can be specified.
 
