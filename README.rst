@@ -26,9 +26,9 @@ Purpose
 -------
 This library provides a function for partitioning iterable data structure instances. When the number of parts is specified explicitly, it is treated as a strict requirement and an exception is raised when it cannot be satisfied. When a length for all parts (or each part) is specified explicitly, a best-effort approach is used: as many parts of the specified length are retrieved as possible, with the possibility that some parts at the end of the partition sequence have a shorter (but still non-zero) length.
 
-Package Installation and Usage
-------------------------------
-The package is available on `PyPI <https://pypi.org/project/parts/>`_::
+Installation and Usage
+----------------------
+This library is available as a `package on PyPI <https://pypi.org/project/parts>`__::
 
     python -m pip install parts
 
@@ -73,21 +73,27 @@ Several examples are presented below::
       ...
     ValueError: cannot retrieve 3 parts from object given part length parameter of 2
 
+Development
+-----------
+All installation and development dependencies are managed using `setuptools <https://pypi.org/project/setuptools>`__ and are fully specified in ``setup.py``. The ``extras_require`` parameter is used to `specify optional requirements <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`__ for various development tasks. This makes it possible to specify additional options (such as ``docs``, ``lint``, and so on) when performing installation using `pip <https://pypi.org/project/pip>`__::
+
+    python -m pip install .[docs,lint]
+
 Documentation
--------------
+^^^^^^^^^^^^^
 .. include:: toc.rst
 
 The documentation can be generated automatically from the source files using `Sphinx <https://www.sphinx-doc.org/>`_::
 
+    python -m pip install .[docs]
     cd docs
-    python -m pip install -r requirements.txt
     sphinx-apidoc -f -E --templatedir=_templates -o _source .. ../setup.py && make html
 
 Testing and Conventions
------------------------
+^^^^^^^^^^^^^^^^^^^^^^^
 All unit tests are executed and their coverage is measured when using `pytest <https://docs.pytest.org/>`_ (see ``setup.cfg`` for configuration details)::
 
-    python -m pip install pytest pytest-cov
+    python -m pip install .[test]
     python -m pytest
 
 Alternatively, all unit tests are included in the module itself and can be executed using `doctest <https://docs.python.org/3/library/doctest.html>`_::
@@ -96,26 +102,28 @@ Alternatively, all unit tests are included in the module itself and can be execu
 
 Style conventions are enforced using `Pylint <https://www.pylint.org/>`_::
 
-    python -m pip install pylint
+    python -m pip install .[lint]
     python -m pylint parts
 
 Contributions
--------------
+^^^^^^^^^^^^^
 In order to contribute to the source code, open an issue or submit a pull request on the `GitHub page <https://github.com/lapets/parts>`_ for this library.
 
 Versioning
-----------
+^^^^^^^^^^
 Beginning with version 0.2.0, the version number format for this library and the changes to the library associated with version number increments conform with `Semantic Versioning 2.0.0 <https://semver.org/#semantic-versioning-200>`_.
 
 Publishing
-----------
-This library can be published as a `package on PyPI <https://pypi.org/project/parts/>`_ by a package maintainer. Install the `wheel <https://pypi.org/project/wheel/>`_ package, remove any old build/distribution files, and package the source into a distribution archive::
+^^^^^^^^^^
+This library can be published as a `package on PyPI <https://pypi.org/project/parts>`__ by a package maintainer. First, install the dependencies required for packaging and publishing::
 
-    python -m pip install wheel
+    python -m pip install .[publish]
+
+Remove any old build/distribution files. Then, package the source into a distribution archive using the `wheel <https://pypi.org/project/wheel>`__ package::
+
     rm -rf dist *.egg-info
     python setup.py sdist bdist_wheel
 
-Next, install the `twine <https://pypi.org/project/twine/>`_ package and upload the package distribution archive to PyPI::
+Finally, upload the package distribution archive to `PyPI <https://pypi.org>`__ using the `twine <https://pypi.org/project/twine>`__ package::
 
-    python -m pip install twine
     python -m twine upload dist/*
