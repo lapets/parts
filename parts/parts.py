@@ -44,7 +44,9 @@ def _slice(xs, lower, upper):
         try:
             return islice(xs, 0, upper - lower)
         except:
-            raise TypeError('object does not support retrieval of slices') from None
+            raise TypeError(
+                'object does not support retrieval of slices'
+            ) from None
 
 def parts(xs, number=None, length=None): # pylint: disable=R0912,R0915
     """
@@ -112,7 +114,7 @@ def parts(xs, number=None, length=None): # pylint: disable=R0912,R0915
     [[1, 2, 3], [4, 5, 6]]
     >>> list(parts([1, 2, 3, 4, 5, 6], number=3, length=2))
     [[1, 2], [3, 4], [5, 6]]
-    >>> list(parts(iter([1, 2, 3, 4, 5, 6]), number=3, length=2)) # doctest: +NORMALIZE_WHITESPACE
+    >>> list(parts(iter([1, 2, 3, 4, 5, 6]), number=3, length=2))
     Traceback (most recent call last):
       ...
     TypeError: object must have length to determine if number of \
@@ -200,15 +202,15 @@ parts having specified length(s) can be retrieved
     True
     >>> isinstance(next(parts((1, 2, 3, 4), number=2, length=[2, 2])), tuple)
     True
-    >>> isinstance(next(parts("abc", length=2)), str)
+    >>> isinstance(next(parts('abc', length=2)), str)
     True
-    >>> isinstance(next(parts("abc", length=[2, 1])), str)
+    >>> isinstance(next(parts('abc', length=[2, 1])), str)
     True
-    >>> isinstance(next(parts("abc", number=2)), str)
+    >>> isinstance(next(parts('abc', number=2)), str)
     True
-    >>> isinstance(next(parts("abcd", number=2, length=2)), str)
+    >>> isinstance(next(parts('abcd', number=2, length=2)), str)
     True
-    >>> isinstance(next(parts("abcd", number=2, length=[2, 2])), str)
+    >>> isinstance(next(parts('abcd', number=2, length=[2, 2])), str)
     True
     >>> isinstance(next(parts(bytes([1, 2, 3, 4, 5]), length=2)), bytes)
     True
@@ -314,12 +316,12 @@ parts having specified length(s) can be retrieved
     [inherit(1, 2), inherit(3, 4)]
     """
     if number is not None and not isinstance(number, int):
-        raise TypeError("number parameter must be an integer")
+        raise TypeError('number parameter must be an integer')
 
     if length is not None:
         if not isinstance(length, int) and not isinstance(length, Iterable):
             raise TypeError(
-                "length parameter must be an integer or iterable of integers"
+                'length parameter must be an integer or iterable of integers'
             )
 
     if number is not None and length is None:
@@ -327,7 +329,7 @@ parts having specified length(s) can be retrieved
             len_ = len(xs)
         except:
             raise TypeError(
-                "object must have length to determine part lengths from number parameter"
+                'object must have length to determine part lengths from number parameter'
             ) from None
 
         number = max(1, min(len_, number)) # Number should be reasonable.
@@ -368,7 +370,7 @@ parts having specified length(s) can be retrieved
                     length = next(lengths)
                     if not isinstance(length, int):
                         raise TypeError(
-                            "length parameter must be an integer or iterable of integers"
+                            'length parameter must be an integer or iterable of integers'
                         )
 
                     part = _slice(xs, index, index + length)
@@ -379,8 +381,8 @@ parts having specified length(s) can be retrieved
                     (part, empty) = _empty(part)
                     if empty:
                         raise ValueError(
-                            "object has too few items to retrieve parts having " + \
-                            "specified part lengths"
+                            'object has too few items to retrieve parts having ' + \
+                            'specified part lengths'
                         )
                     yield part
                 except StopIteration:
@@ -391,38 +393,38 @@ parts having specified length(s) can be retrieved
             len_ = len(xs)
         except:
             raise TypeError(
-                "object must have length to determine if number of " + \
-                "parts having specified length(s) can be retrieved"
+                'object must have length to determine if number of ' + \
+                'parts having specified length(s) can be retrieved'
             ) from None
 
         if isinstance(length, int):
             length = max(1, length)
             if len_ > (length * number) or len_ <= (length * (number - 1)):
                 raise ValueError(
-                    "cannot retrieve " + str(number) + " parts from object " + \
-                    "given part length parameter of " + str(length)
+                    'cannot retrieve ' + str(number) + ' parts from object ' + \
+                    'given part length parameter of ' + str(length)
                 )
             for i in range(0, len_, length): # Yield parts of specified length.
                 yield xs[i:i + length]
         elif (not isinstance(length, list)) or \
              (not all(isinstance(l, int) for l in length)):
             raise TypeError(
-                "length parameter must be an integer or list of integers"
+                'length parameter must be an integer or list of integers'
             )
         else: # Length must be a list of integers.
             if len(length) != number: # pylint: disable=R1720
                 raise ValueError(
-                    "number parameter does not match number of specified part lengths"
+                    'number parameter does not match number of specified part lengths'
                 )
             elif len_ <= sum(length[:-1]):
                 raise ValueError(
-                    "object has too few items to retrieve parts having " + \
-                    "specified part lengths"
+                    'object has too few items to retrieve parts having ' + \
+                    'specified part lengths'
                 )
             elif len_ > sum(length):
                 raise ValueError(
-                    "object has too many items to retrieve parts having " + \
-                    "specified part lengths"
+                    'object has too many items to retrieve parts having ' + \
+                    'specified part lengths'
                 )
             else:
                 lengths = iter(length)
@@ -437,7 +439,7 @@ parts having specified length(s) can be retrieved
                         break
 
     else: # Neither is specified.
-        raise ValueError("missing number of parts parameter and part length(s) parameter")
+        raise ValueError('missing number of parts parameter and part length(s) parameter')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     doctest.testmod() # pragma: no cover
