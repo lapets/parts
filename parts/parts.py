@@ -3,8 +3,8 @@ Minimal library that enables partitioning of iterable objects in a concise
 manner.
 """
 import doctest
-from typing import Union, Optional, Tuple
-from collections.abc import Iterable
+from typing import Tuple, Union, Optional, Iterable
+import collections.abc
 from itertools import islice, chain
 
 def _empty(xs: Iterable) -> Tuple[Iterable, bool]:
@@ -329,7 +329,7 @@ parts having specified length(s) can be retrieved
         raise TypeError('number parameter must be an integer')
 
     if length is not None:
-        if not isinstance(length, int) and not isinstance(length, Iterable):
+        if not isinstance(length, int) and not isinstance(length, collections.abc.Iterable):
             raise TypeError(
                 'length parameter must be an integer or iterable of integers'
             )
