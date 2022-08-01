@@ -49,7 +49,7 @@ def _slice(xs: Iterable, lower: int, upper: int) -> Iterable:
                 'object does not support retrieval of slices'
             ) from None
 
-def parts( # pylint: disable=R0912,R0915
+def parts(
         xs: Iterable,
         number: Optional[int] = None,
         length: Union[int, Iterable[int], None] = None
@@ -325,6 +325,7 @@ parts having specified length(s) can be retrieved
       ...
     TypeError: length parameter must be an integer or list of integers
     """
+    # pylint: disable=too-many-branches,too-many-statements
     if number is not None and not isinstance(number, int):
         raise TypeError('number parameter must be an integer')
 
@@ -422,31 +423,33 @@ parts having specified length(s) can be retrieved
                 'length parameter must be an integer or list of integers'
             )
         else: # Length must be a list of integers.
-            if len(length) != number: # pylint: disable=R1720
+            if len(length) != number:
                 raise ValueError(
                     'number parameter does not match number of specified part lengths'
                 )
-            elif len_ <= sum(length[:-1]):
+
+            if len_ <= sum(length[:-1]):
                 raise ValueError(
                     'object has too few items to retrieve parts having ' + \
                     'specified part lengths'
                 )
-            elif len_ > sum(length):
+
+            if len_ > sum(length):
                 raise ValueError(
                     'object has too many items to retrieve parts having ' + \
                     'specified part lengths'
                 )
-            else:
-                lengths = iter(length)
-                index = 0
-                while True:
-                    try:
-                        length = next(lengths)
-                        part = _slice(xs, index, index + length)
-                        index += length
-                        yield part
-                    except StopIteration:
-                        break
+
+            lengths = iter(length)
+            index = 0
+            while True:
+                try:
+                    length = next(lengths)
+                    part = _slice(xs, index, index + length)
+                    index += length
+                    yield part
+                except StopIteration:
+                    break
 
     else: # Neither is specified.
         raise ValueError('missing number of parts parameter and part length(s) parameter')
