@@ -1,6 +1,6 @@
 [project]
 name = "parts"
-version = "1.5.2"
+version = "1.6.0"
 description = """\
     Minimal library that enables partitioning \
     of iterable objects in a concise manner.\
