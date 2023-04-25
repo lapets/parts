@@ -112,7 +112,7 @@ Alternatively, all unit tests are included in the module itself and can be execu
 
     python src/parts/parts.py -v
 
-Style conventions are enforced using `Pylint <https://pylint.pycqa.org>`__:
+Style conventions are enforced using `Pylint <https://pylint.readthedocs.io>`__:
 
 .. code-block:: bash
 
