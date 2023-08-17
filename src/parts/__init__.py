@@ -1,2 +1,2 @@
-"""Gives users direct access to the function."""
+"""Allow users to access the function directly."""
 from parts.parts import parts
