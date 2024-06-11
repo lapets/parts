@@ -44,6 +44,8 @@ jobs:
 
   release:
     name: Sign distribution package with Sigstore and upload it as a GitHub release.
+    needs:
+    - publish
     runs-on: ubuntu-latest
     permissions:
       contents: write # For GitHub.
