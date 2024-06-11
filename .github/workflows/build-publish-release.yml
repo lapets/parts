@@ -1,4 +1,4 @@
-name: build-publish
+name: build-publish-release
 on:
   push
 jobs:
@@ -34,10 +34,40 @@ jobs:
     permissions:
       id-token: write
     steps:
-    - name: Download all the distributions.
+    - name: Download all the package distributions.
       uses: actions/download-artifact@v4
       with:
         name: python-package-distributions
         path: dist/
     - name: Publish distribution package to PyPI.
       uses: pypa/gh-action-pypi-publish@release/v1
+
+  release:
+    name: Sign distribution package with Sigstore and upload it as a GitHub release.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # For GitHub.
+      id-token: write # For Sigstore.
+    steps:
+    - name: Download all the package distributions.
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Sign the package distributions with Sigstore.
+      uses: sigstore/gh-action-sigstore-python@v2.1.1
+      with:
+        inputs: >-
+          ./dist/*.tar.gz
+          ./dist/*.whl
+    - name: Create GitHub release.
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: gh release create '${{ github.ref_name }}' --repo '${{ github.repository }}'
+    - name: Upload package distributions and signatures/certificates as a GitHub release.
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: >-
+        gh release upload
+        '${{ github.ref_name }}' dist/**
+        --repo '${{ github.repository }}'
