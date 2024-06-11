@@ -1,9 +1,9 @@
-name: build-publish-release
+name: build-publish-sign-release
 on:
   push
 jobs:
   build:
-    name: Build distribution package.
+    name: Build package.
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -16,14 +16,14 @@ jobs:
       run: python -m pip install .[publish]
     - name: Build a source tarball and a binary wheel.
       run: python -m build --sdist --wheel .
-    - name: Store the distribution packages.
+    - name: Store the package distributions.
       uses: actions/upload-artifact@v4
       with:
         name: python-package-distributions
         path: dist/
 
   publish:
-    name: Publish distribution package to PyPI.
+    name: Publish package to PyPI.
     if: startsWith(github.ref, 'refs/tags/') # Publish on tag pushes.
     needs:
     - build
@@ -39,11 +39,11 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
-    - name: Publish distribution package to PyPI.
+    - name: Publish package to PyPI.
       uses: pypa/gh-action-pypi-publish@release/v1
 
-  release:
-    name: Sign distribution package with Sigstore and upload it as a GitHub release.
+  sign-release:
+    name: Sign package distributions with Sigstore and upload them to a GitHub release.
     needs:
     - publish
     runs-on: ubuntu-latest
@@ -62,11 +62,11 @@ jobs:
         inputs: >-
           ./dist/*.tar.gz
           ./dist/*.whl
-    - name: Create GitHub release.
+    - name: Create a GitHub release.
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: gh release create '${{ github.ref_name }}' --repo '${{ github.repository }}'
-    - name: Upload package distributions and signatures/certificates as a GitHub release.
+    - name: Upload package distributions and signatures/certificates to the GitHub release.
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: >-
