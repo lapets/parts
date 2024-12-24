@@ -3,7 +3,7 @@ name = "parts"
 version = "2.1.0"
 description = """\
     Minimal library that enables partitioning \
-    of iterable objects in a concise manner.\
+    of iterable collections in a concise manner.\
     """
 license = {text = "MIT"}
 authors = [

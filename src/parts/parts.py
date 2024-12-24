@@ -1,5 +1,5 @@
 """
-Minimal library that enables partitioning of iterable objects in a concise
+Minimal library that enables partitioning of iterable collections in a concise
 manner.
 """
 import doctest

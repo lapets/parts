@@ -2,7 +2,7 @@
 parts
 =====
 
-Minimal library that enables partitioning of iterable objects in a concise manner.
+Minimal library that enables partitioning of iterable collections in a concise manner.
 
 |pypi| |readthedocs| |actions| |coveralls|
 
