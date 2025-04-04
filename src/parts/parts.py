@@ -7,7 +7,7 @@ from typing import Tuple, Union, Optional, Iterable
 import collections.abc
 from itertools import islice, chain
 
-def _empty(xs: Iterable) -> Tuple[Iterable, bool]:
+def _empty(iterable: Iterable) -> Tuple[Iterable, bool]:
     """
     Determine whether a sequential type instance is empty.
 
@@ -24,33 +24,33 @@ def _empty(xs: Iterable) -> Tuple[Iterable, bool]:
     RuntimeError: error in generator
     """
     try:
-        return (xs, len(xs) == 0)
+        return (iterable, len(iterable) == 0)
     except TypeError:
         try:
-            x = next(xs)
-            return (iter(chain([x], xs)), False)
+            x = next(iterable)
+            return (iter(chain([x], iterable)), False)
         except StopIteration:
-            return (xs, True)
+            return (iterable, True)
         except Exception as e:
             raise e from None
 
-def _slice(xs: Iterable, lower: int, upper: int) -> Iterable:
+def _slice(iterable: Iterable, lower: int, upper: int) -> Iterable:
     """
     Attempt to retrieve a subsequence of a sequential type instance
     using slice notation or :obj:`itertools.islice`.
     """
     try:
-        return xs[lower: min(len(xs), upper)]
+        return iterable[lower: min(len(iterable), upper)]
     except TypeError:
         try:
-            return islice(xs, 0, upper - lower)
+            return islice(iterable, 0, upper - lower)
         except:
             raise TypeError(
                 'object does not support retrieval of slices'
             ) from None
 
 def parts(
-        xs: Iterable,
+        iterable: Iterable,
         number: Optional[int] = None,
         length: Union[int, Iterable[int], None] = None
     ) -> Iterable:
@@ -61,7 +61,7 @@ def parts(
     either elements are distributed in a best-effort manner or an exception is
     raised (depending on the specific scenario).
 
-    :param xs: Iterable to split into parts.
+    :param iterable: Iterable to split into parts.
     :param number: Number of parts.
     :param length: Length of every part or iterable of part lengths.
 
@@ -184,10 +184,10 @@ def parts(
     the output.
 
     >>> class wrap:
-    ...     def __init__(self, xs): self.xs = xs
-    ...     def __len__(self): return len(self.xs)
-    ...     def __getitem__(self, key): return wrap(self.xs[key])
-    ...     def __repr__(self): return 'wrap(' + str(self.xs) + ')'
+    ...     def __init__(self, iterable): self.iterable = iterable
+    ...     def __len__(self): return len(self.iterable)
+    ...     def __getitem__(self, key): return wrap(self.iterable[key])
+    ...     def __repr__(self): return 'wrap(' + str(self.iterable) + ')'
     >>> isinstance(next(parts(wrap([1, 2, 3, 4]), number=2)), wrap)
     True
     >>> list(parts(wrap([1, 2, 3, 4]), number=2))
@@ -337,7 +337,7 @@ parts having specified length(s) can be retrieved
 
     if number is not None and length is None:
         try:
-            len_ = len(xs)
+            len_ = len(iterable)
         except:
             raise TypeError(
                 'object must have length to determine part lengths from number parameter'
@@ -352,9 +352,9 @@ parts having specified length(s) can be retrieved
         while number > 0 and i < len_:
             number -= 1
             if number == 0:
-                yield xs[i:]
+                yield iterable[i:]
                 break
-            yield xs[i:i + length]
+            yield iterable[i:i + length]
             i += length
             length = (len_ - i) // number
 
@@ -363,7 +363,7 @@ parts having specified length(s) can be retrieved
             length = max(1, length)
             index = 0
             while True:
-                part = _slice(xs, index, index + length)
+                part = _slice(iterable, index, index + length)
                 index += length
 
                 # The type of each part will match that of the original
@@ -384,7 +384,7 @@ parts having specified length(s) can be retrieved
                             'length parameter must be an integer or iterable of integers'
                         )
 
-                    part = _slice(xs, index, index + length)
+                    part = _slice(iterable, index, index + length)
                     index += length
 
                     # The type of each part will match that of the original
@@ -401,7 +401,7 @@ parts having specified length(s) can be retrieved
 
     elif number is not None and length is not None:
         try:
-            len_ = len(xs)
+            len_ = len(iterable)
         except:
             raise TypeError(
                 'object must have length to determine if number of ' + \
@@ -416,7 +416,7 @@ parts having specified length(s) can be retrieved
                     'given part length parameter of ' + str(length)
                 )
             for i in range(0, len_, length): # Yield parts of specified length.
-                yield xs[i:i + length]
+                yield iterable[i:i + length]
         elif (not isinstance(length, list)) or \
              (not all(isinstance(l, int) for l in length)):
             raise TypeError(
@@ -445,7 +445,7 @@ parts having specified length(s) can be retrieved
             while True:
                 try:
                     length = next(lengths)
-                    part = _slice(xs, index, index + length)
+                    part = _slice(iterable, index, index + length)
                     index += length
                     yield part
                 except StopIteration:
